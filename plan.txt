@@ -1,0 +1,108 @@
+1.Wishlist and saved items: Enable users to create a wishlist or save items for future purchase. Implement functionality to add/remove items from the wishlist and provide recommendations based on saved items.
+2.Social media integration: Allow users to share products or their shopping experience on social media platforms. Implement social sharing buttons for popular platforms like Facebook, Twitter, and Pinterest.
+3.Advanced search and filtering: Enhance the search functionality by implementing advanced search options such as filters by price range, color, size, brand, or any other relevant attribute. Use technologies like Elasticsearch to provide fast and accurate search results.
+4.Personalized recommendations: Implement a recommendation system that suggests products based on user preferences, browsing history, purchase history, or similar products purchased by other users.
+5.Inventory management: Develop a system to manage and track inventory levels. Allow admins to update stock quantities, set low stock notifications, and display availability status to users.
+6.Order tracking and shipment integration: Provide a tracking feature for users to monitor the status of their orders. Integrate with shipping carriers like UPS, FedEx, or DHL to fetch real-time tracking information.
+7.Automatic email notifications: Implement email notifications for various events, such as order confirmation, shipping updates, order cancellations, password reset requests, and promotional campaigns.
+8.Product.js line no. 140 rating update
+9.Product.js line no. 203 sizes
+10.Auto complete the seach
+
+
+
+
+
+  const updateStockHandler = async () => {
+    const response = await dispatch(updateStock({ id, stock: newStock }));
+
+    if (updateStock.fulfilled.match(response)) {
+      toast.success(response.payload);
+    } else if (updateStock.rejected.match(response)) {
+      toast.error(response.payload);
+    }
+  };
+
+
+
+
+      Overview:
+        Total number of products listed.
+        Total number of orders received.
+        Total revenue generated.
+
+    Products Management:
+        List of all products with details (name, price, stock, etc.).
+        Ability to add, edit, or delete products.
+        View product analytics: total sales, average rating, etc.
+        Stock status: Low-stock products or products out of stock.
+
+    Order Management:
+        List of orders received with order details (order ID, date, status, etc.).
+        Filter orders by status (processing, shipped, delivered).
+        View individual order details including products, quantities, and prices.
+        Option to update order status (shipped, delivered).
+        View order analytics: total revenue, average order value, etc.
+
+    Analytics and Insights:
+        Monthly sales graph or chart.
+        Top-selling products.
+        Most profitable products.
+        Revenue trend over time.
+        Customer reviews and ratings summary.
+
+    Customer Management:
+        List of customers who have placed orders.
+        Customer details (name, email, contact information).
+        Order history for each customer.
+        Ability to communicate with customers via messages.
+
+    Financial Reports:
+        Generate and download sales reports.
+        Tax summaries and calculations.
+        Profit and loss statements.
+
+    Notifications:
+        Receive notifications for new orders.
+        Low stock alerts for products.
+        Important updates related to the store.
+
+    Settings:
+        Store information (name, logo, contact details).
+        Manage shipping methods and fees.
+        Configure payment gateway settings.
+
+    User Profile:
+        Edit profile information.
+        Change password or update contact details.
+        View and manage account settings.
+
+    Data Visualization:
+        Use charts, graphs, and visualizations to present data in an easily understandable format.
+        Display trends, patterns, and comparisons over time.
+
+    Responsive Design:
+        Ensure the dashboard is accessible and functional on different devices (desktop, tablet, mobile).
+
+
+
+1.Visitors
+2.Recent Invoice top 10 product sell customer(name,id,product name with image orderDate,state,price)
+3.compare income and sell Monthly
+
+
+
+why clip path and shadow not working together
+due to nature of clip path,shadow part is cut   
+use drop shadow(filter) instead of shadow
+
+
+
+1---> if seller not verified not show the dashboard
+
+
+
+
+
+
+
