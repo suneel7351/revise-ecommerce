@@ -38,7 +38,7 @@ function Product() {
   );
   const isProductInCompare = () => {
     const storedProducts = JSON.parse(localStorage.getItem("compareProducts")) || [];
-    return storedProducts.some((p) => p._id === product._id);
+    return storedProducts.some((p) => p?._id === product?._id);
   };
 
   const [compareButtonColor, setCompareButtonColor] = useState(
@@ -112,6 +112,8 @@ function Product() {
       if (storedProducts.length < 4) {
         storedProducts.push(product);
         setCompareButtonColor(true)
+      }else{
+        toast.error("Atmost 4 product can added for compare at a time.")
       }
     }
 
@@ -120,7 +122,7 @@ function Product() {
 
 
 
-  console.log(product);
+  
 
   return (
     <div className="py-8">
@@ -264,7 +266,7 @@ function Product() {
                       <div className="flex items-center gap-2 shadow-sm border border-gray-100 bg-gray-50 py-1 px-4 cursor-pointer">
                         <AddToWishlist product={product && product} />
                       </div>
-                      <div onClick={handleAddToCompare} className="flex w-[205px] items-center gap-2 shadow-sm border border-gray-100 bg-gray-50 py-1 px-4 cursor-pointer"> <DiGitCompare className={`text-2xl`} style={compareButtonColor ? { color: "#fe5f1e" } : {}} /> {compareButtonColor === true ? <span>Added To Compare</span> : <span>Add To Compare</span>}
+                      <div onClick={handleAddToCompare} className="flex w-[205px] items-center gap-2 shadow-sm border border-gray-100 bg-gray-50 py-1 px-4 cursor-pointer"> <DiGitCompare fontSize={"18px"}  style={compareButtonColor ? { color: "#fe5f1e" } : {}} /> {compareButtonColor === true ? <span>Added To Compare</span> : <span>Add To Compare</span>}
 
 
 

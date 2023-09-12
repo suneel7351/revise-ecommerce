@@ -59,7 +59,7 @@ class FeaturesController {
     static getFieldsACToCategory = AsyncError(async (req, res, next) => {
         const category = await Category.findOne({name:req.params.category})
              
-        res.status(200).json({ success: true,fields:category.fields})
+        res.status(200).json({ success: true,fields:category?.fields || []})
     })
 
 

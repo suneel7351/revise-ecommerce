@@ -1,5 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
+import path from 'path'
+import { fileURLToPath } from 'url';
 import { dbConnect } from "./configuration/db.js";
 import { router as productRouter } from "./routes/products/route.js";
 import { router as userRouter } from "./routes/user/route.js";
@@ -47,6 +49,12 @@ app.use(ErrorMiddleware);
 
 
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, '../client/build')));
+app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/build/index.html'));
+});
 
 
 export default app;

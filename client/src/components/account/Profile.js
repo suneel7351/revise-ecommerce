@@ -21,7 +21,7 @@ function Profile() {
         <>
           <MetaData title={user && `${user.name}-profile`} />
           {user && (
-            <div className="mt-8 md:px-8 px-1">
+            <div className=" md:px-8 px-1">
               <div className="flex flex-wrap justify-center md:gap-32 gap-16 px-4 border border-slate-100 py-12 shadow-sm">
                 <div className="flex flex-col justify-center items-center gap-8">
                   <div className="border border-slate-200 shadow-md p-2 rounded-full">

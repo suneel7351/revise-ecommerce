@@ -73,11 +73,14 @@ class Controller {
     const resultPerPage = Number(process.env.PAGE);
     const page = parseInt(req.query.page, 10) || 1;
     const skip = (page - 1) * resultPerPage;
-
+    const ratings = parseInt(req.query.ratings, 10) || 0
     const query = {};
 
     if (req.query.keyword) {
       query.name = { $regex: req.query.keyword, $options: "i" };
+    }
+    if (ratings) {
+      query.ratings = { $gte: ratings }
     }
 
     if (req.query.category) {
@@ -88,12 +91,14 @@ class Controller {
       query.price = { $gte: req.query.minPrice, $lte: req.query.maxPrice };
     }
 
+
+
     const products = await SellerProduct.find(query)
       .skip(skip)
       .limit(resultPerPage)
       .exec();
 
-    const count = await Product.countDocuments(query);
+    const count = await SellerProduct.countDocuments(query);
 
     res.status(200).json({
       success: true,

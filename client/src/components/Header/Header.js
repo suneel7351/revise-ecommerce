@@ -7,8 +7,9 @@ import { logout } from '../../redux/auth/userSlice';
 import { sellerLogout } from '../../redux/seller/auth';
 import { toast } from 'react-hot-toast';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
-
+import { DiGitCompare } from 'react-icons/di'
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 const Header = () => {
   const navigate = useNavigate()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -144,14 +145,34 @@ const Header = () => {
       <div className='flex md:gap-8 gap-4 items-center'>
 
         {
-          !isSeller && !isAdmin && <button className="relative text-gray-500 " onClick={cartPage}>
+          !isSeller && !isAdmin &&
+          <div className='flex gap-4 items-center'>
+          <button className="relative text-gray-500 " onClick={cartPage}>
             <ShoppingCartIcon />
             {cartItems && cartItems.length > 0 && (
-              <span className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-2 py-1 text-black rounded-full text-xs">
+              <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
                 {cartItems && cartItems.length}
-              </span>
+              </small>
             )}
           </button>
+          
+          <Link to={"/compare"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
+            <DiGitCompare />
+            {cartItems && cartItems.length > 0 && (
+              <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                {cartItems && cartItems.length}
+              </small>
+            )}
+          </Link>
+          <Link to={"/wishlist"} className="relative text-gray-500 " onClick={cartPage}>
+            <FavoriteBorderIcon />
+            {cartItems && cartItems.length > 0 && (
+              <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                {cartItems && cartItems.length}
+              </small>
+            )}
+          </Link>
+          </div>
         }
         <div className='flex items-center gap-4'>
 

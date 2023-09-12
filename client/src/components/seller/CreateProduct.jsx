@@ -22,7 +22,7 @@ const CreateProduct = () => {
     otherFields: fields?.map((field) => ({ fieldName: field.fieldName, value: "" })),
   });
 
-  console.log(formData);
+  
 
   useEffect(() => {
     dispatch(getAllCategoriesName())

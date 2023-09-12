@@ -2,7 +2,8 @@ import axios from "axios";
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // const url = "https://ecom-w0cc.onrender.com/api/v1";
-const url = "http://localhost:9889/api/v2"
+// const url = "http://localhost:9889/api/v2"
+const url = "/api/v2";
 const reviewsSlice = createSlice({
   name: "seller-review",
   initialState: {

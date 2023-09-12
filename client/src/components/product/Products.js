@@ -6,6 +6,7 @@ import ProductItem from "./ProductItem";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import {
   Button,
   Dialog,
@@ -16,8 +17,8 @@ import {
   Slider,
 } from "@mui/material";
 import Loader from "../Loader";
+import { getAllCategoriesName } from "../../redux/superAdmin/admin";
 const Products = () => {
-  const [localSearchTerm, setLocalSearchTerm] = useState("");
   const [width, setWidth] = useState(window.screen.width);
   const [category, setCategory] = useState("");
   const location = useLocation();
@@ -27,11 +28,12 @@ const Products = () => {
   const {
     data,
     loading,
-    error,
     productCount,
     resultPerPage,
     filteredProducts,
   } = useSelector((state) => state.products);
+  console.log(productCount,filteredProducts,resultPerPage);
+  const { categories } = useSelector((state) => state.superAdmin)
   const [page, setPage] = useState(1);
   const [price, setPrice] = useState([0, 10000000000000]);
   const [ratingValue, setRatingValue] = useState(0);
@@ -44,11 +46,29 @@ const Products = () => {
   };
   const handlePageChange = (event, value) => {
     setPage(value);
+    dispatch(getAllProducts({
+      keyword: keyword ? keyword : "",
+      page: page ? page : 1,
+      category: category ? category : "",
+      price,
+      ratingValue: ratingValue ? ratingValue : 0,
+    }))
   };
   const handlePriceChange = (e, newPrice) => {
     setPrice(newPrice);
+    dispatch(getAllProducts({
+      keyword: keyword ? keyword : "",
+      page: page ? page : 1,
+      category: category ? category : "",
+      price,
+      ratingValue: ratingValue ? ratingValue : 0,
+    }))
+
   };
   const allCategoryHandler = () => {
+    setCategory("")
+    setPage(1)
+    setRatingValue(0)
     dispatch(
       getAllProducts({
         keyword: "",
@@ -60,11 +80,21 @@ const Products = () => {
     );
   };
 
+  const handleCategoryClick = (item) => {
+    setCategory(item);
+    dispatch(getAllProducts({
+      keyword: keyword ? keyword : "",
+      page: page ? page : 1,
+      category: category ? category : "",
+      price,
+      ratingValue: ratingValue ? ratingValue : 0,
+    }))
+  };
+
 
 
 
   useEffect(() => {
-
     dispatch(
       getAllProducts({
         keyword: keyword ? keyword : "",
@@ -74,10 +104,7 @@ const Products = () => {
         ratingValue: ratingValue ? ratingValue : 0,
       })
     );
-    if (error) {
-      return toast.error(error);
-    }
-  }, [dispatch, keyword, category, page, price, ratingValue, error]);
+  }, [keyword, category, page, price, ratingValue]);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -91,24 +118,19 @@ const Products = () => {
     };
   });
 
-  const categories = [
-    "Laptop",
-    "Mobiles",
-    "Electronics",
-    "Cosmetic",
-    "Shoes",
-    "Books",
-    "Clothes",
-  ];
+  useEffect(() => {
+    dispatch(getAllCategoriesName())
+  }, [])
 
-  console.log(data);
+
+
   return (
     <>
       <>
         {" "}
         <Metadata title={"eccomerce-products"} />
         <div
-          className={width < 600 ? "flex flex-col gap-2 p-2" : "flex p-2 gap-2"}
+          className={width < 600 ? "flex flex-col gap-2 p-2" : "flex gap-2 h-[88vh]"}
         >
           <Button
             variant="contained"
@@ -125,36 +147,32 @@ const Products = () => {
             className={
               width < 600
                 ? "hidden"
-                : " h-screen flex-[1_1_0] border border-slate-200 shadow-md py-4 "
+                : " flex-[1_1_0] bg-white border border-gray-50 shadow-sm bg-white4 py-4"
             }
           >
             <h1 className="text-slate-600 text-xl pl-4 font-bold border-b border-slate-200 pb-3">
-              Filters
+              Shop By Categories
             </h1>
             <div className="px-4">
-              <small className="font-bold">CATEGORIES</small>
               <ul className="flex flex-col gap-2 my-2">
                 <li className="flex items-center">
-                  <ChevronLeftIcon style={{ color: "#475569" }} />{" "}
-                  <span
+                  <button
                     className="text-slate-600 cursor-pointer"
                     onClick={allCategoryHandler}
                   >
                     All Products
-                  </span>
+                  </button>
                 </li>
-                {categories.map((item, index) => {
-                  return (
-                    <li className="flex items-center" key={index}>
-                      <ChevronLeftIcon style={{ color: "#475569" }} />{" "}
-                      <span
-                        className="text-slate-600 cursor-pointer"
-                        onClick={() => setCategory(item)}
-                      >
-                        {item}
-                      </span>
-                    </li>
-                  );
+                {categories?.map((item, index) => {
+                  return <li className="flex items-center" key={index + "index"}>
+                    <button
+                      className="text-gray-600 "
+                      onClick={() => handleCategoryClick(item)}
+                    >
+                      {item}
+                    </button>
+                  </li>
+
                 })}
               </ul>
             </div>{" "}
@@ -179,7 +197,14 @@ const Products = () => {
                 <Rating
                   value={ratingValue}
                   onChange={(event, newValue) => {
-                    setRatingValue(newValue);
+                    setRatingValue(newValue)
+                    dispatch(getAllProducts({
+                      keyword: keyword ? keyword : "",
+                      page: page ? page : 1,
+                      category: category ? category : "",
+                      price,
+                      ratingValue: ratingValue,
+                    }))
                   }}
                   style={{ color: "#fe5f1e" }}
                   size="large"
@@ -191,11 +216,11 @@ const Products = () => {
             className={
               width < 600
                 ? "flex flex-col gap-6 items-center"
-                : "flex-[4_4_0] flex flex-col gap-6 items-center"
+                : "flex-[4_4_0] overflow-y-auto py-4 flex flex-col gap-6 items-center"
             }
           >
             {" "}
-            <div className="flex items-center gap-2 px-2 flex-wrap justify-center  py-4 min-h-[88vh] w-full">
+            <div className="flex items-center gap-4 px-2 flex-wrap justify-center  py-4  w-full">
               {loading ? (
                 <Loader />
               ) : (
@@ -214,10 +239,11 @@ const Products = () => {
                 </>
               )}
             </div>
-            {productCount > resultPerPage &&
-              filteredProducts > resultPerPage && (
+            {/* {productCount > resultPerPage && */}
+              {/* filteredProducts >= resultPerPage &&  */}
+              {/* ( */}
                 <Pagination
-                  style={{ backgroundColor: "#fff", width: "auto" }}
+                  // style={{ backgroundColor: "#fff", width: "auto" }}
                   count={Math.ceil(productCount / Number(resultPerPage))}
                   variant="outlined"
                   shape="rounded"
@@ -225,7 +251,7 @@ const Products = () => {
                   page={page}
                   onChange={handlePageChange}
                 />
-              )}
+              {/* )} */}
           </div>
         </div>
         <Dialog fullWidth onClose={handleClose} open={open}>
@@ -245,7 +271,7 @@ const Products = () => {
                     All Products
                   </span>
                 </li>
-                {categories.map((item, index) => {
+                {categories?.map((item, index) => {
                   return (
                     <li className="flex items-center" key={index}>
                       <ChevronLeftIcon style={{ color: "#475569" }} />{" "}

@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 // const url = "https://ecom-w0cc.onrender.com/api/v1";
-const url = "http://localhost:9889/api/v1";
+// const url = "http://localhost:9889/api/v1";
+const url = "/api/v1";
 const productSlice = createSlice({
   name: "/admin/productslice",
   initialState: {

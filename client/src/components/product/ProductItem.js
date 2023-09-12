@@ -1,31 +1,111 @@
 import { Rating } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./product.css";
-
+import { DiGitCompare } from 'react-icons/di'
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import AddToWishlist from "./AddToWishlist";
+import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { addToCart, removeItem } from "../../redux/product/addToCart";
 function ProductItem({ product }) {
+  const [isInCart, setIsInCart] = useState(
+    localStorage.getItem("cartItem") &&
+    JSON.parse(localStorage.getItem("cartItem")).some(
+      (item) => item.product === product._id
+    )
+  );
+  const dispatch = useDispatch()
+  const isProductInCompare = () => {
+    const storedProducts = JSON.parse(localStorage.getItem("compareProducts")) || [];
+    return storedProducts.some((p) => p?._id === product?._id);
+  };
+
+  const [compareButtonColor, setCompareButtonColor] = useState(
+    isProductInCompare()
+  );
+  const handleAddToCompare = () => {
+    const storedProducts = JSON.parse(localStorage.getItem("compareProducts")) || [];
+
+    const productIndex = storedProducts.findIndex((p) => p._id === product._id);
+
+    if (productIndex !== -1) {
+      storedProducts.splice(productIndex, 1);
+      setCompareButtonColor(false)
+    } else {
+      if (storedProducts.length < 4) {
+        storedProducts.push(product);
+        setCompareButtonColor(true)
+      } else {
+        toast.error("Atmost 4 product can added for compare at a time.")
+      }
+    }
+
+    localStorage.setItem("compareProducts", JSON.stringify(storedProducts));
+  };
+
+
+
+  const handleAddToCart = (cart) => {
+    if (isInCart) {
+      dispatch(removeItem(product._id))
+      setIsInCart(false);
+      
+    } else {
+      dispatch(addToCart(cart))
+      setIsInCart(true);
+    }
+  };
+
+
+
   return (
     <>
       {product && (
-        <Link
-          to={`/product/${product._id}`}
-          className="bg-white hover:shadow-md hover:border hover:border-slate-100 px-4  flex flex-col product-card w-[250px]"
+        <div
+          className="bg-white group shadow-sm border border-gray-50  flex flex-col product-card w-[250px] gap-4 py-4"
         >
-          <img
-            className="object-contain h-[250px]"
-            src={
-              product.images &&
-              product.images.length > 0 &&
-              product.images[0].url
-            }
-            alt={product.name}
-          />
-          <div className="product-card-content">
-            {" "}
-            <h1 className="font-bold pt-2">
-              {product.name.substring(0, 48)}...
-            </h1>
-            <p>{product.description.substring(0, 25)}</p>
+          <div className="relative">
+            <img
+              className="object-cover h-[250px] mx-auto"
+              src={
+                product.images &&
+                product.images.length > 0 &&
+                product.images[0].url
+              }
+              alt={product.name}
+            />
+
+
+            <div className="absolute  transition-all duration-300 ease-in-out top-2 right-4 items-center flex flex-col gap-4 text-gray-600">
+              <button>  <AddToWishlist product={product && product} text={false} /></button>
+              <div className="hidden group-hover:flex flex-col gap-4 ">
+                <button className={isInCart ? "text-orange-500" : ""}>  <LocalMallIcon fontSize={"18"} onClick={() => handleAddToCart({
+                  product: product._id,
+                  name: product.name,
+                  image: product.images[0] ? product.images[0].url : product.name,
+                  price: product.price,
+                  quantity: 1,
+                  Stock: product.Stock,
+                })} /></button>
+                <button onClick={handleAddToCompare} style={compareButtonColor ? { color: "#fe5f1e" } : {}}>  <DiGitCompare fontSize={"18"} /></button>
+                <Link to={`/product/${product._id}`}>  <VisibilityIcon fontSize={"18"} />
+                </Link>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div className="product-card-content flex flex-col gap-2 px-4">
+            <span className="text-orange-800 font-bold">{product.brand ? product.brand : "en-ecom"}</span>
+            <h3 className="font-bold text-sm">
+              <Link to={`/product/${product._id}`}>
+                {product.name.substring(0, 48)}...
+              </Link>
+
+            </h3>
             <div className="flex gap-1 items-center">
               {product.numOfReviews > 0 ? (
                 <Rating
@@ -42,7 +122,7 @@ function ProductItem({ product }) {
             </div>
             <span className="text-[#fe5f1e]">&#x20B9;{product.price}</span>
           </div>
-        </Link>
+        </div>
       )}
     </>
   );

@@ -47,7 +47,7 @@ function Sidebar() {
             </TreeItem>
           </TreeView>
         </div>
-        <Link to="/seller/orders" className="admin-link-div">
+        {/* <Link to="/seller/orders" className="admin-link-div">
           {
             showText ? <>  <ListAlt />
               <span>Orders</span></> : <ListAlt />
@@ -65,7 +65,7 @@ function Sidebar() {
             showText ? <>    <NotificationsIcon />
               <span>Notifications</span></> : <NotificationsIcon />
           }
-        </Link>
+        </Link> */}
       </div>
     </div>
 

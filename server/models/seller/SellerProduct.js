@@ -90,6 +90,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    brand:{
+        type: String,
+
+    }
 });
 
 const SellerProduct = mongoose.model("sellerProduct", productSchema);

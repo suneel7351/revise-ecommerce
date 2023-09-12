@@ -51,12 +51,14 @@ import { adminProfile } from "./redux/superAdmin/admin";
 import CreateCategory from "./components/admin/CreateCategory";
 import AllCategories from "./components/admin/AllCategories";
 import UpdateCategory from "./components/admin/UpdateCategory";
+import ProtectUser from "./routes/ProtectUser";
 function App() {
   const dispatch = useDispatch();
   const { isSeller } = useSelector((state) => state.sellerAuth);
   const { isAdmin } = useSelector((state) => state.superAdmin);
+  const { isAuthenticated } = useSelector((state) => state.user);
 
- 
+
   useEffect(() => {
     dispatch(profile());
   }, [dispatch]);
@@ -89,6 +91,12 @@ function App() {
       <div className="bg-gray-50 min-h-[85vh]">
         <Routes>
           <Route path="/admin-login/Jrkjlsx$04949xbuepx9nvxd904irjisjf" element={<AdminLogin />} />
+          <Route exact path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="/product/:id" element={<Product />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:keyword" element={<Products />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/compare" element={<ProductCompare />} />
           <Route path="/seller/register" element={<RegisterSeller />} />
@@ -120,65 +128,68 @@ function App() {
           <Route element={<ProtectAdmin isAdmin={isAdmin} />}>
 
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/category/new" element={<CreateCategory/>} />
-            <Route path="/admin/categories" element={<AllCategories/>} />
-            <Route path="/admin/category/:id" element={<UpdateCategory/>} />
+            <Route path="/admin/category/new" element={<CreateCategory />} />
+            <Route path="/admin/categories" element={<AllCategories />} />
+            <Route path="/admin/category/:id" element={<UpdateCategory />} />
 
 
           </Route>
 
 
-          <Route path="/order/:id" element={<OrderDetails />} />
 
-          <Route exact path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="/product/:id" element={<Product />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:keyword" element={<Products />} />
-          <Route
-            path="/profile"
-            element={<ProtectedRoute Component={Profile} />}
-          />{" "}
-          <Route
-            path="/update/profile"
-            element={<ProtectedRoute Component={EditProfile} />}
-          />
-          <Route
-            path="/update/password"
-            element={<ProtectedRoute Component={UpdatePassword} />}
-          />
+
+          <Route element={<ProtectUser isUser={isAuthenticated} />}>
+            <Route path="/order/:id" element={<OrderDetails />} />
+
+            <Route
+              path="/shipping" element={<Shipping />} />
+            <Route
+              exact
+              path="/order/confirm"
+              element={< ConfrimOrder />}
+            />
+
+            <Route
+              path="/process/payment"
+              element={
+
+                < Payment />
+
+              }
+            />
+
+            <Route
+              path="/payment/success"
+              element={<Success />}
+            />{" "}
+            <Route
+              path="/payment/fail"
+              element={< Fail />}
+            />
+            <Route path="/orders" element={< Order />} />
+
+            <Route
+              path="/profile"
+              element={<Profile />}
+            />{" "}
+            <Route
+              path="/update/profile"
+              element={< EditProfile />}
+            />
+            <Route
+              path="/update/password"
+              element={< UpdatePassword />}
+            />
+          </Route>
+
+
+
+
+
           <Route path="/forgot/password" element={<ForogtPassword />} />
           <Route path="/password/reset/:token" element={<PasswordReset />} />
           <Route path="/cart" element={<Cart />} />
-          <Route
-            path="/shipping"
-            element={<ProtectedRoute Component={Shipping} />}
-          />
-          <Route
-            exact
-            path="/order/confirm"
-            element={<ProtectedRoute Component={ConfrimOrder} />}
-          />
 
-          <Route
-            path="/process/payment"
-            element={
-
-              <ProtectedRoute Component={Payment} />
-
-            }
-          />
-
-          <Route
-            path="/payment/success"
-            element={<ProtectedRoute Component={Success} />}
-          />{" "}
-          <Route
-            path="/payment/fail"
-            element={<ProtectedRoute Component={Fail} />}
-          />
-          <Route path="/orders" element={<ProtectedRoute Component={Order} />} />
 
 
 

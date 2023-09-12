@@ -5,7 +5,6 @@ import {
   clearMessage,
   changePassword,
 } from "../../redux/auth/profileSlice";
-import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Metadata from "../Metadata";
 import { toast } from "react-toastify";
@@ -41,8 +40,8 @@ function UpdatePassword() {
   return (
     <>
       <Metadata title="eccomerce-UpdatePassword" />
-      <div className="mt-12 md:w-[30%] w-[90%] mx-auto">
-        <div className="border border-slate-100 shadow-sm py-8">
+      <div className="pt-12 md:w-[30%] w-[90%] mx-auto">
+        <div className="border border-gray-50 shadow-sm bg-white py-8">
           <h1 className="text-slate-600 text-2xl text-center mb-4">
             Change Password
           </h1>
@@ -91,7 +90,7 @@ function UpdatePassword() {
                    text-white rounded py-1 px-2`}
                 onClick={hanldeSignIn}
               >
-                {loading ? "Loading..." : "Login"}
+                {loading ? "Updating..." : "Update"}
               </button>
             </div>
           </form>

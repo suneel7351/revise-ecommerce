@@ -57,8 +57,8 @@ function EditProfile() {
   return (
     <>
       <Metadata title="eccomerce-EditProfile" />
-      <div className="mt-12 md:w-[30%] w-[90%] mx-auto">
-        <div className="border border-slate-100 shadow-sm p-8">
+      <div className="pt-12 md:w-[30%] w-[90%] mx-auto">
+        <div className="border border-gray-50 bg-white shadow-sm p-8">
           <h1 className="text-center text-3xl text-slate-600 mb-6">
             Edit Profile
           </h1>{" "}

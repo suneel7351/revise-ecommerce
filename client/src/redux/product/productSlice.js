@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 // const url = "https://ecom-w0cc.onrender.com/api/v1";
-const url = "http://localhost:9889/api/v1";
+// const url = "http://localhost:9889/api/v1";
+const url = "/api/v1";
 const productSlice = createSlice({
   name: "products",
   initialState: {
@@ -83,14 +84,14 @@ export const { clearError, clearMessage } = productSlice.actions;
 
 export const getAllProducts = createAsyncThunk("/products", async (filter, { rejectWithValue }) => {
   try {
-    let link;
+    // let link;
 
-    if (filter.category) {
-      link = `products?keyword=${filter.keyword || ""}&page=${filter.page || ""}&price[gte]=${filter.price[0] || ""}&price[lte]=${filter.price[1] || ""}&category=${filter.category || ""}&ratings[gte]=${filter.ratingValue || ""}`;
-    } else {
-      link = `products?keyword=${filter.keyword || ""}&page=${filter.page || ""}&price[gte]=${filter.price[0] || ""}&price[lte]=${filter.price[1] || ""}&ratings[gte]=${filter.ratingValue || ""}`;
-    }
-
+    // if (filter.category) {
+    //   link = `products?keyword=${filter.keyword || ""}&page=${filter.page || ""}&price[gte]=${filter.price[0] || ""}&price[lte]=${filter.price[1] || ""}&category=${filter.category || ""}&ratings=${filter.ratingValue}`;
+    // } else {
+    //   link = `products?keyword=${filter.keyword || ""}&page=${filter.page}&price[gte]=${filter.price[0] || ""}&price[lte]=${filter.price[1] || ""}&ratings[gte]=${filter.ratingValue || ""}`;
+    // }
+    const link = `products?keyword=${filter.keyword}&page=${filter.page}&ratings=${filter.ratingValue}&category=${filter.category}&minPrice=${filter.price[0]}&maxPrice=${filter.price[1]}`
     const { data } = await axios.get(`${url}/${link}`);
 
     return data;

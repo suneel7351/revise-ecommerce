@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
-function AddToWishlist({ product }) {
+function AddToWishlist({ product, text = true }) {
   const [isAdded, setIsAdded] = useState(false);
   const [wishlist, setWishlist] = useState(
     JSON.parse(localStorage.getItem("wishlist")) || []
@@ -25,13 +25,15 @@ function AddToWishlist({ product }) {
   };
 
   return (
-    <div className="flex gap-2 items-center min-w-[160px]" onClick={toggleWishlist}>
+    <div className={!text ? "" : `flex gap-2 items-center min-w-[160px]`} onClick={toggleWishlist}>
       {isAdded ? (
-        <FavoriteIcon className="text-orange-500" />
+        <FavoriteIcon className="text-orange-500" fontSize="18"/>
       ) : (
-        <FavoriteBorderIcon  />
+        <FavoriteBorderIcon fontSize="18"/>
       )}
-      <span>{isAdded ? "Added to Wishlist" : "Add to Wishlist"}</span>
+      {
+        text && <span>{isAdded ? "Added to Wishlist" : "Add to Wishlist"}</span>
+      }
     </div>
   );
 }
