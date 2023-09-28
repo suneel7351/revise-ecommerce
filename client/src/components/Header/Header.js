@@ -22,8 +22,7 @@ const Header = () => {
   const { isAuthenticated, user } = useSelector(state => state.user);
   const { isSeller, seller } = useSelector(state => state.sellerAuth);
   const { isAdmin } = useSelector(state => state.superAdmin);
-  const { cartItems } = useSelector(state => state.cart);
-  const [cartItemCount, setCartItemCount] = useState(0)
+  const { cartItems,wishlist,compareProducts } = useSelector(state => state.cart);
   const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -98,8 +97,10 @@ const Header = () => {
     navigate("/cart")
   }
   return (
-    <nav className="bg-white shadow border-b border-gray-100 py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-10">
-      <Link to="/" className="text-xl font-bold text-gray-800">Logo</Link>
+    <nav className="bg-white border-b border-gray-100 py-2 px-6 md:px-12 flex items-center justify-between sticky top-0 z-10">
+      <Link to="/" className="text-xl bg-gray-100 font-bold text-gray-800  shadow-lg px-4 py-2 brand-logo">
+        Eng&rarr;Ecom
+      </Link>
       <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-full left-0 w-full bg-gray-100 z-100 py-4`}>
 
         <div className='flex gap-4 flex-col'><Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="block text-gray-800 hover:text-gray-600 px-4 py-2">Home</Link>
@@ -157,18 +158,19 @@ const Header = () => {
           </button>
           
           <Link to={"/compare"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
-            <DiGitCompare />
-            {cartItems && cartItems.length > 0 && (
+         
+            <FavoriteBorderIcon />
+            {wishlist && wishlist.length > 0 && (
               <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                {cartItems && cartItems.length}
+                {wishlist && wishlist.length}
               </small>
             )}
           </Link>
           <Link to={"/wishlist"} className="relative text-gray-500 " onClick={cartPage}>
-            <FavoriteBorderIcon />
-            {cartItems && cartItems.length > 0 && (
+          <DiGitCompare size={24}/>
+            {compareProducts && compareProducts.length > 0 && (
               <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                {cartItems && cartItems.length}
+                {compareProducts && compareProducts.length}
               </small>
             )}
           </Link>

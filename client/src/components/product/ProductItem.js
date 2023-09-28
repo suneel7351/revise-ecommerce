@@ -8,7 +8,8 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import AddToWishlist from "./AddToWishlist";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { addToCart, removeItem } from "../../redux/product/addToCart";
+import { } from '../../style/HotItemCard.css'
+import { addToCart, addToCompare, removeItem } from "../../redux/product/addToCart";
 function ProductItem({ product }) {
   const [isInCart, setIsInCart] = useState(
     localStorage.getItem("cartItem") &&
@@ -25,25 +26,7 @@ function ProductItem({ product }) {
   const [compareButtonColor, setCompareButtonColor] = useState(
     isProductInCompare()
   );
-  const handleAddToCompare = () => {
-    const storedProducts = JSON.parse(localStorage.getItem("compareProducts")) || [];
 
-    const productIndex = storedProducts.findIndex((p) => p._id === product._id);
-
-    if (productIndex !== -1) {
-      storedProducts.splice(productIndex, 1);
-      setCompareButtonColor(false)
-    } else {
-      if (storedProducts.length < 4) {
-        storedProducts.push(product);
-        setCompareButtonColor(true)
-      } else {
-        toast.error("Atmost 4 product can added for compare at a time.")
-      }
-    }
-
-    localStorage.setItem("compareProducts", JSON.stringify(storedProducts));
-  };
 
 
 
@@ -51,7 +34,7 @@ function ProductItem({ product }) {
     if (isInCart) {
       dispatch(removeItem(product._id))
       setIsInCart(false);
-      
+
     } else {
       dispatch(addToCart(cart))
       setIsInCart(true);
@@ -64,7 +47,10 @@ function ProductItem({ product }) {
     <>
       {product && (
         <div
-          className="bg-white group shadow-sm border border-gray-50  flex flex-col product-card w-[250px] gap-4 py-4"
+
+          className="
+          bg-white group flex flex-col rounded-sm gap-4 py-4 
+          product w-[276px]"
         >
           <div className="relative">
             <img
@@ -89,7 +75,7 @@ function ProductItem({ product }) {
                   quantity: 1,
                   Stock: product.Stock,
                 })} /></button>
-                <button onClick={handleAddToCompare} style={compareButtonColor ? { color: "#fe5f1e" } : {}}>  <DiGitCompare fontSize={"18"} /></button>
+                <button onClick={() => dispatch(addToCompare(product))} style={compareButtonColor ? { color: "#fe5f1e" } : {}}>  <DiGitCompare fontSize={"18"} /></button>
                 <Link to={`/product/${product._id}`}>  <VisibilityIcon fontSize={"18"} />
                 </Link>
               </div>

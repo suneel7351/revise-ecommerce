@@ -1,15 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../../redux/product/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import "./Home.css";
 import ProductItem from "../product/ProductItem";
 import Metadata from "../Metadata";
 import Loader from "../Loader";
-import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
+import Navcard from "./Navcard";
+import data from '../../data/Data'
+import HeroSlider from "./HeroSlider";
+import Heading from "./Heading";
+import HotAccessorries from "./HotAccessorries";
+import Offer from "./Offer";
+import SpecialProducts from "./SpecialProducts";
+
 
 function Home() {
-  const { data, loading } = useSelector((state) => state.products);
-
+  const { data: productData, loading } = useSelector((state) => state.products);
+ 
+  const [category, setCategory] = useState("")
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(
@@ -22,30 +31,59 @@ function Home() {
       })
     );
   }, [dispatch]);
+
+  const handleShowProduct = (cat) => {
+    setCategory(cat)
+    console.log(cat);
+  }
   return (
     <>
       {" "}
       <Metadata title="eccomerce-Home" />
-      <div className="banner">
-        <h1 className="text-center text-5xl text-slate-700 ">
-          Buy Your favourite Products
-        </h1>
-        <div className="flex gap-4">
-          <Link to="/cart" className="rounded-md text-slate-100 px-4 py-2">Buy Now</Link>
-          <Link to="/products" className="rounded-md text-slate-100 px-4 py-2">Explore</Link>
-        </div>
+
+      <Navbar handleShowProduct={handleShowProduct} />
+
+
+      <div className="flex flex-wrap justify-evenly items-center md:px-8 bg-white shadow-sm border-b border-gray-100 bg-gray-50 gap-4">
+        {
+          data[category]?.map((items) => {
+            return (
+              <Navcard
+                name={items.name}
+                image={items.image}
+                price={items.price}
+              />
+            );
+          })
+        }
       </div>
-      <h1 className="text-center text-3xl font-bold mt-12 text-slate-700">
-        Explore Products
-      </h1>
-      <div className="min-h-[88vh] flex items-center justify-center py-4 mt-8 container mx-auto">
+
+
+      <HeroSlider />
+
+
+      {/* <Heading text="STAR PRODUCTS" /> */}
+
+
+    
+      <Offer/>
+
+      <Heading text="HOT ACCESSORIES" />
+
+      <HotAccessorries />
+
+
+      <Heading text="FEATURED COLLECTIONS" />
+
+
+      <div className="min-h-[88vh] flex items-center justify-center py-4 container mx-auto">
         {loading ? (
           <Loader />
         ) : (
           <>
             {" "}
             <div className="flex items-center justify-center gap-8 flex-wrap">
-              {data.map((product) => {
+              {productData?.map((product) => {
                 return <ProductItem product={product} key={product._id} />;
               })}
 
@@ -55,6 +93,11 @@ function Home() {
       </div>
 
 
+      <Heading text="SPECIAL PRODUCTS" />
+
+      <SpecialProducts product={productData}/>
+
+     
 
     </>
   );

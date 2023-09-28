@@ -69,3 +69,8 @@ textarea:focus {
     }
   }
   
+
+
+  .brand-logo{
+    clip-path: polygon(100% 21%, 92% 53%, 100% 80%, 0 80%, 8% 50%, 0 21%);
+  }

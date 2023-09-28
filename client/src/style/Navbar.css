@@ -1,0 +1,35 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-bottom: 1px solid rgba(43, 43, 43, 0.137);
+  background-color: white;
+}
+
+.navbar > :nth-child(2) {
+  position: relative;
+  margin-right: 6vmax;
+}
+.navbar > :nth-child(2) > button {
+  color: rgb(59, 59, 59);
+  font-weight: 500;
+  font-size: 16px;
+  text-decoration: none;
+  margin: 0 15px;
+}
+.navbar > :nth-child(2) > button:hover {
+  color: orangered;
+}
+
+
+#logoImage {
+  transform: translate(-58px);
+  transition: all 0.3s;
+}
+#logoImage:hover {
+  transform: translate(0);
+}

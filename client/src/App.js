@@ -25,7 +25,7 @@ import Success from "./components/cart/Success";
 import Fail from "./components/cart/Fail";
 import Order from "./components/order/Order";
 import OrderDetails from "./components/order/OrderDetails";
-import ProtectedRoute from "./components/Routes/ProtectedRoute";
+import data from './data/Data'
 
 
 import Notfound from "./components/Notfound";
@@ -52,6 +52,14 @@ import CreateCategory from "./components/admin/CreateCategory";
 import AllCategories from "./components/admin/AllCategories";
 import UpdateCategory from "./components/admin/UpdateCategory";
 import ProtectUser from "./routes/ProtectUser";
+
+
+
+
+
+
+
+
 function App() {
   const dispatch = useDispatch();
   const { isSeller } = useSelector((state) => state.sellerAuth);
@@ -74,6 +82,9 @@ function App() {
   // window.addEventListener("contextmenu", (e) => {
   //   e.preventDefault();
   // });
+
+
+
   return (
     <Router>
       <ToastContainer
@@ -87,7 +98,7 @@ function App() {
         draggable
         pauseOnHover
       />
-      <Header />
+      <Header/>
       <div className="bg-gray-50 min-h-[85vh]">
         <Routes>
           <Route path="/admin-login/Jrkjlsx$04949xbuepx9nvxd904irjisjf" element={<AdminLogin />} />
@@ -189,6 +200,28 @@ function App() {
           <Route path="/forgot/password" element={<ForogtPassword />} />
           <Route path="/password/reset/:token" element={<PasswordReset />} />
           <Route path="/cart" element={<Cart />} />
+
+
+
+
+      
+   
+       
+         {/* <Slider start={banner.start} />
+          <Offer offer={data.offer} />
+          <Heading text="STAR PRODUCTS" />
+          <StarProduct StarProduct={data.starProduct} />
+          <Heading text="HOT ACCESSORIES " />
+          <HotAccessoriesMenu />  */}
+          
+
+
+         {/* <Heading text="REVIEW PRODUCTS" />
+          <ProductReviews productReviews={data.productReviews} />
+          <Heading text="VIDEOS" />
+          <Heading text="IN THE PRESS" />
+          <Banner banner={data.banner} />
+          <Footer Footer={data.footer} />  */}
 
 
 

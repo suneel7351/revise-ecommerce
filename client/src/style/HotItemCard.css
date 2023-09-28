@@ -1,0 +1,39 @@
+body {
+  background-color: #f5f5f5;
+}
+.HotItemCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  width: 276px;
+  flex-direction: column;
+  margin: 10px;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+.HotItemCard > img {
+  width: 70%;
+}
+.HotItemCard > span {
+  color: orangered;
+}
+.product{
+  background-color: rgb(255, 255, 255);
+  /* width: 276px; */
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.width{
+  width: 400px;
+}
+.HotItemCard:hover ,
+.product:hover
+
+{
+  transform: translateY(-0.4vmax);
+  box-shadow: 0px 6px 15px rgba(53, 53, 53, 0.363);
+}
+
+
