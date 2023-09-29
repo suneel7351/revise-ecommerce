@@ -1,12 +1,9 @@
-* {
-  padding: 0;
-  margin: 0;
-}
+
 .navbar {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  border-bottom: 1px solid rgba(43, 43, 43, 0.137);
+  /* border-bottom: 1px solid rgba(43, 43, 43, 0.137); */
   background-color: white;
 }
 

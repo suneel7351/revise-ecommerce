@@ -8,7 +8,7 @@ import { sellerLogout } from '../../redux/seller/auth';
 import { toast } from 'react-hot-toast';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { DiGitCompare } from 'react-icons/di'
-import LocalMallIcon from '@mui/icons-material/LocalMall';
+import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 const Header = () => {
   const navigate = useNavigate()
@@ -22,7 +22,7 @@ const Header = () => {
   const { isAuthenticated, user } = useSelector(state => state.user);
   const { isSeller, seller } = useSelector(state => state.sellerAuth);
   const { isAdmin } = useSelector(state => state.superAdmin);
-  const { cartItems,wishlist,compareProducts } = useSelector(state => state.cart);
+  const { cartItems, wishlist, compareProducts } = useSelector(state => state.cart);
   const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -97,23 +97,109 @@ const Header = () => {
     navigate("/cart")
   }
   return (
-    <nav className="bg-white border-b border-gray-100 py-2 px-6 md:px-12 flex items-center justify-between sticky top-0 z-10">
-      <Link to="/" className="text-xl bg-gray-100 font-bold text-gray-800  shadow-lg px-4 py-2 brand-logo">
+    <nav className="bg-white top-header overflow-x-hidden overflow-y-hidden border-b border-gray-100 py-2 px-2 md:px-4 flex items-center gap-4 justify-center sticky top-0 z-10">
+      <Link to="/" className=" bg-gray-100 hidden md:block md:font-bold text-gray-800  shadow-lg px-4 py-1 brand-logo">
         Eng&rarr;Ecom
       </Link>
-      <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-full left-0 w-full bg-gray-100 z-100 py-4`}>
+      <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} fixed inset-0 bg-[#00003c] bg-opacity-100 z-50`}>
+        <div className="flex justify-end p-4">
+          <button
+            className="text-white text-2xl focus:outline-none"
+            onClick={toggleMobileMenu}
+          >
+           <CloseIcon/>
+          </button>
+        </div>
 
-        <div className='flex gap-4 flex-col'><Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="block text-gray-800 hover:text-gray-600 px-4 py-2">Home</Link>
-          <Link onClick={() => setIsMobileMenuOpen(false)} to="/products" className="block text-gray-800 hover:text-gray-600 px-4 py-2">Products</Link></div>
+        <div className="flex flex-col items-center">
+          <Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="block text-white hover:text-gray-400 px-4 py-2">Home</Link>
+          <Link onClick={() => setIsMobileMenuOpen(false)} to="/products" className="block text-white hover:text-gray-400 px-4 py-2">Products</Link>
+      
+
+
+          <div className='flex mt-4'>
+          {
+            !isSeller && !isAdmin &&
+            <div className='flex gap-4 items-center flex-col'>
+              <button className="relative text-gray-500 " onClick={cartPage}>
+                <ShoppingCartIcon />
+                {cartItems && cartItems.length > 0 && (
+                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                 {cartItems && cartItems.length}
+                  </small>
+                )}
+              </button>
+
+              <Link to={"/wishlist"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
+
+                <FavoriteBorderIcon />
+                {wishlist && wishlist.length > 0 && (
+                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                    {wishlist && wishlist.length}
+                  </small>
+                )}
+              </Link>
+              <Link to={"/compare"} className="relative text-gray-500 " onClick={cartPage}>
+                <DiGitCompare size={24} />
+                {compareProducts && compareProducts.length > 0 && (
+                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                    {compareProducts && compareProducts.length}
+                  </small>
+                )}
+              </Link>
+            </div>
+          }
+        </div>
+        <div className='hidden md:flex items-center gap-4'>
+
+          {
+            !isAuthenticated && !isSeller && !isAdmin ? <>
+
+              <div className="relative"  >
+                <button
+                  className=" text-black bg-gray-50 rounded hover:bg-gray-100 py-1 px-2"
+                  onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}
+                  onMouseEnter={handleLoginDropdownOpen}
+                >
+                  Login
+                </button>
+                {isLoginDropdownOpen && (
+                  <div className="absolute left-0 mt-4 w-40 bg-gray-100 border border-gray-200 shadow-sm py-2 z-10" style={{ left: '50%', transform: 'translateX(-50%)' }}>
+                    <Link
+                      to="/login"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsLoginDropdownOpen(false)}
+                    >
+                      Login as Buyer
+                    </Link>
+                    <Link
+                      to="/seller/login"
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      onClick={() => setIsLoginDropdownOpen(false)}
+                    >
+                      Login as Seller
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+
+            </> :
+
+              <div></div>
+          }
+        </div>
+
+        </div>
       </div>
-      <form className=" flex items-center" >
+      <form  className="flex items-center" >
         <div className='relative  '>
           <input
             type="text"
             placeholder="Search Products"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="pl-8 pr-3 py-1 border border-gray-200 shadow-sm focus:outline-none md:w-[400px] w-[200px]"
+            className="pl-8 pr-3 py-1 border border-gray-200 shadow-sm focus:outline-none header-form"
 
           />
           <AiOutlineSearch className='absolute left-2 top-1/2 transform -translate-y-1/2 text-xl cursor-pointer' />
@@ -140,43 +226,46 @@ const Header = () => {
 
 
       <div className='hidden  md:flex gap-2 items-center'>
-        <Link to="/" className="block text-gray-800 hover:text-gray-600 px-4 py-2">Home</Link>
-        <Link to="/products" className="block text-gray-800 hover:text-gray-600 px-4 py-2">Products</Link></div>
+        <Link to="/" className="block text-gray-800 hover:text-gray-600 px-1 py-2">Home</Link>
+        <Link to="/products" className="block text-gray-800 hover:text-gray-600 px-1 py-2">Products</Link>
+      </div>
 
       <div className='flex md:gap-8 gap-4 items-center'>
 
-        {
-          !isSeller && !isAdmin &&
-          <div className='flex gap-4 items-center'>
-          <button className="relative text-gray-500 " onClick={cartPage}>
-            <ShoppingCartIcon />
-            {cartItems && cartItems.length > 0 && (
-              <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                {cartItems && cartItems.length}
-              </small>
-            )}
-          </button>
-          
-          <Link to={"/compare"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
-         
-            <FavoriteBorderIcon />
-            {wishlist && wishlist.length > 0 && (
-              <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                {wishlist && wishlist.length}
-              </small>
-            )}
-          </Link>
-          <Link to={"/wishlist"} className="relative text-gray-500 " onClick={cartPage}>
-          <DiGitCompare size={24}/>
-            {compareProducts && compareProducts.length > 0 && (
-              <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                {compareProducts && compareProducts.length}
-              </small>
-            )}
-          </Link>
-          </div>
-        }
-        <div className='flex items-center gap-4'>
+        <div className='hidden md:flex'>
+          {
+            !isSeller && !isAdmin &&
+            <div className='flex gap-4 items-center'>
+              <button className="relative text-gray-500 " onClick={cartPage}>
+                <ShoppingCartIcon />
+                {cartItems && cartItems.length > 0 && (
+                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                    {cartItems && cartItems.length}
+                  </small>
+                )}
+              </button>
+
+              <Link to={"/wishlist"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
+
+                <FavoriteBorderIcon />
+                {wishlist && wishlist.length > 0 && (
+                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                    {wishlist && wishlist.length}
+                  </small>
+                )}
+              </Link>
+              <Link to={"/compare"} className="relative text-gray-500 " onClick={cartPage}>
+                <DiGitCompare size={24} />
+                {compareProducts && compareProducts.length > 0 && (
+                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
+                    {compareProducts && compareProducts.length}
+                  </small>
+                )}
+              </Link>
+            </div>
+          }
+        </div>
+        <div className='hidden md:flex items-center gap-4'>
 
           {
             !isAuthenticated && !isSeller && !isAdmin ? <>
@@ -259,7 +348,7 @@ const Header = () => {
                 className="rounded-full w-12 h-12"
               />
               {isProfileDropdownOpen && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-full bg-white border border-gray-200 shadow-sm py-2 z-10 w-[250%]">
+                <div  className="absolute left-0 transform -translate-x-1/2 top-full bg-black border border-gray-200 shadow-sm py-2 z-100 w-[250%]">
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"

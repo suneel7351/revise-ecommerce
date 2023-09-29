@@ -74,3 +74,20 @@ textarea:focus {
   .brand-logo{
     clip-path: polygon(100% 21%, 92% 53%, 100% 80%, 0 80%, 8% 50%, 0 21%);
   }
+
+  .footer-bg{
+    background-color: #00003c;
+  }
+
+.header-form{
+  min-width: 200px;
+}
+  @media (min-width: 870px) {
+    .top-header{
+      justify-content: space-between;
+    }
+
+    .header-form{
+      min-width: 330px!important;
+    }
+  }

@@ -52,6 +52,7 @@ import CreateCategory from "./components/admin/CreateCategory";
 import AllCategories from "./components/admin/AllCategories";
 import UpdateCategory from "./components/admin/UpdateCategory";
 import ProtectUser from "./routes/ProtectUser";
+import Footer from "./components/Footer";
 
 
 
@@ -237,8 +238,11 @@ function App() {
               )
             }
           />
+
+          
         </Routes>
       </div>
+        <Footer/>
     </Router>
   );
 }
