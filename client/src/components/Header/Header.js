@@ -1,48 +1,113 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom';
-import { AiOutlineSearch } from 'react-icons/ai';
 import { getAllProducts } from '../../redux/product/productSlice';
+import { useState, useEffect } from 'react';
+import { styled, alpha } from '@mui/material/styles';
 import { logout } from '../../redux/auth/userSlice';
 import { sellerLogout } from '../../redux/seller/auth';
-import { toast } from 'react-hot-toast';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import InputBase from '@mui/material/InputBase';
+import Badge from '@mui/material/Badge';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
+import { Avatar } from '@mui/material';
 import { DiGitCompare } from 'react-icons/di'
-import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-const Header = () => {
-  const navigate = useNavigate()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+      [theme.breakpoints.up('md')]: {
+        width: '24ch', // Double the width for md and larger devices
+        '&:focus': {
+          width: '40ch', // Double the width when focused for md and larger devices
+        },
+      },
+    },
+  },
+}));
+export default function Header() {
+
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [typingTimeout, setTypingTimeout] = useState(null);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElMenu, setAnchorElMenu] = React.useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+  const [isMenuItemsOpen, setIsMenuItemsOpen] = React.useState(false);
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const { data } = useSelector(state => state.products);
   const { isAuthenticated, user } = useSelector(state => state.user);
   const { isSeller, seller } = useSelector(state => state.sellerAuth);
   const { isAdmin } = useSelector(state => state.superAdmin);
   const { cartItems, wishlist, compareProducts } = useSelector(state => state.cart);
-  const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+
+
+
+  const [isLoginMenuOpen, setIsLoginMenuOpen] = React.useState(false);
+  const loginButtonRef = React.useRef(null);
+
+  const handleLoginMenuOpen = () => {
+    setIsLoginMenuOpen(true);
   };
 
-  const handleLoginDropdownOpen = () => {
-    setIsLoginDropdownOpen(true);
+  const handleLoginMenuClose = () => {
+    setIsLoginMenuOpen(false);
   };
 
 
-
-
-
-  const handleProfileDropdownOpen = () => {
-    setIsProfileDropdownOpen(true);
-  };
-
-  const handleProfileDropdownClose = () => {
-    setIsProfileDropdownOpen(false);
-  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -93,304 +158,488 @@ const Header = () => {
   }
 
 
-  const cartPage = () => {
-    navigate("/cart")
-  }
-  return (
-    <nav className="bg-white top-header overflow-x-hidden overflow-y-hidden border-b border-gray-100 py-2 px-2 md:px-4 flex items-center gap-4 justify-center sticky top-0 z-10">
-      <Link to="/" className=" bg-gray-100 hidden md:block md:font-bold text-gray-800  shadow-lg px-4 py-1 brand-logo">
-        Eng&rarr;Ecom
-      </Link>
-      <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} fixed inset-0 bg-[#00003c] bg-opacity-100 z-50`}>
-        <div className="flex justify-end p-4">
-          <button
-            className="text-white text-2xl focus:outline-none"
-            onClick={toggleMobileMenu}
+
+
+
+
+  useEffect(() => {
+    navigate(`?keyword=${encodeURIComponent(searchTerm)}`, { replace: true });
+  }, [searchTerm, navigate])
+
+
+
+
+
+
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+
+
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+
+
+
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+
+
+
+  const handleMenuItemsClose = () => {
+    setAnchorElMenu(null);
+    setIsMenuItemsOpen(false)
+  };
+
+  const handleMobileMenuOpen = (event) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuItemsToggle = (event) => {
+    setAnchorElMenu(event.currentTarget);
+    setIsMenuItemsOpen(!isMenuItemsOpen);
+  };
+
+
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+      style={{ marginTop: '2.6rem' }}
+    >
+      {
+        isAuthenticated && <>
+          <MenuItem onClick={handleMenuClose}> <Link
+            to="/profile"
+            className=""
           >
-           <CloseIcon/>
-          </button>
-        </div>
-
-        <div className="flex flex-col items-center">
-          <Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="block text-white hover:text-gray-400 px-4 py-2">Home</Link>
-          <Link onClick={() => setIsMobileMenuOpen(false)} to="/products" className="block text-white hover:text-gray-400 px-4 py-2">Products</Link>
-      
-
-
-          <div className='flex mt-4'>
-          {
-            !isSeller && !isAdmin &&
-            <div className='flex gap-4 items-center flex-col'>
-              <button className="relative text-gray-500 " onClick={cartPage}>
-                <ShoppingCartIcon />
-                {cartItems && cartItems.length > 0 && (
-                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                 {cartItems && cartItems.length}
-                  </small>
-                )}
-              </button>
-
-              <Link to={"/wishlist"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
-
-                <FavoriteBorderIcon />
-                {wishlist && wishlist.length > 0 && (
-                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                    {wishlist && wishlist.length}
-                  </small>
-                )}
-              </Link>
-              <Link to={"/compare"} className="relative text-gray-500 " onClick={cartPage}>
-                <DiGitCompare size={24} />
-                {compareProducts && compareProducts.length > 0 && (
-                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                    {compareProducts && compareProducts.length}
-                  </small>
-                )}
-              </Link>
-            </div>
-          }
-        </div>
-        <div className='hidden md:flex items-center gap-4'>
-
-          {
-            !isAuthenticated && !isSeller && !isAdmin ? <>
-
-              <div className="relative"  >
-                <button
-                  className=" text-black bg-gray-50 rounded hover:bg-gray-100 py-1 px-2"
-                  onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}
-                  onMouseEnter={handleLoginDropdownOpen}
-                >
-                  Login
-                </button>
-                {isLoginDropdownOpen && (
-                  <div className="absolute left-0 mt-4 w-40 bg-gray-100 border border-gray-200 shadow-sm py-2 z-10" style={{ left: '50%', transform: 'translateX(-50%)' }}>
-                    <Link
-                      to="/login"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={() => setIsLoginDropdownOpen(false)}
-                    >
-                      Login as Buyer
-                    </Link>
-                    <Link
-                      to="/seller/login"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={() => setIsLoginDropdownOpen(false)}
-                    >
-                      Login as Seller
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-
-            </> :
-
-              <div></div>
-          }
-        </div>
-
-        </div>
-      </div>
-      <form  className="flex items-center" >
-        <div className='relative  '>
-          <input
-            type="text"
-            placeholder="Search Products"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="pl-8 pr-3 py-1 border border-gray-200 shadow-sm focus:outline-none header-form"
-
-          />
-          <AiOutlineSearch className='absolute left-2 top-1/2 transform -translate-y-1/2 text-xl cursor-pointer' />
-          {searchResults.length > 0 && searchTerm && (
-            <div className="absolute top-full left-0 w-full bg-white py-4 border border-gray-200 shadow-sm">
-              {searchResults.map((product) => (
-                <Link
-                  onClick={clearSetResult}
-                  key={product._id}
-                  to={`/products?keyword=${product.name.split(" ")[0]}`}
-                  className="flex gap-2 items-center block text-gray-800 hover:text-gray-600 px-4 py-2"
-
-                >
-                  <AiOutlineSearch />  <span>{product.name.split(" ")[0]}</span>
-                </Link>
-              ))}
-            </div>
-          )}
-
-
-        </div>
-      </form>
+            Profile
+          </Link></MenuItem>
+          <MenuItem onClick={handleMenuClose}> <div
+            onClick={logoutHandler}
+            className=""
+          >
+            Logout
+          </div></MenuItem>
+        </>
+      }
 
 
 
-      <div className='hidden  md:flex gap-2 items-center'>
-        <Link to="/" className="block text-gray-800 hover:text-gray-600 px-1 py-2">Home</Link>
-        <Link to="/products" className="block text-gray-800 hover:text-gray-600 px-1 py-2">Products</Link>
-      </div>
-
-      <div className='flex md:gap-8 gap-4 items-center'>
-
-        <div className='hidden md:flex'>
-          {
-            !isSeller && !isAdmin &&
-            <div className='flex gap-4 items-center'>
-              <button className="relative text-gray-500 " onClick={cartPage}>
-                <ShoppingCartIcon />
-                {cartItems && cartItems.length > 0 && (
-                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                    {cartItems && cartItems.length}
-                  </small>
-                )}
-              </button>
-
-              <Link to={"/wishlist"} className="relative text-gray-500 text-[22px]" onClick={cartPage}>
-
-                <FavoriteBorderIcon />
-                {wishlist && wishlist.length > 0 && (
-                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                    {wishlist && wishlist.length}
-                  </small>
-                )}
-              </Link>
-              <Link to={"/compare"} className="relative text-gray-500 " onClick={cartPage}>
-                <DiGitCompare size={24} />
-                {compareProducts && compareProducts.length > 0 && (
-                  <small className="absolute top-[-8px] right-[-13px] text-white shadow bg-orange-500 px-[6px] text-[10px] py-[1px] text-black rounded-full text-xs">
-                    {compareProducts && compareProducts.length}
-                  </small>
-                )}
-              </Link>
-            </div>
-          }
-        </div>
-        <div className='hidden md:flex items-center gap-4'>
-
-          {
-            !isAuthenticated && !isSeller && !isAdmin ? <>
-
-              <div className="relative"  >
-                <button
-                  className=" text-black bg-gray-50 rounded hover:bg-gray-100 py-1 px-2"
-                  onClick={() => setIsLoginDropdownOpen(!isLoginDropdownOpen)}
-                  onMouseEnter={handleLoginDropdownOpen}
-                >
-                  Login
-                </button>
-                {isLoginDropdownOpen && (
-                  <div className="absolute left-0 mt-4 w-40 bg-gray-100 border border-gray-200 shadow-sm py-2 z-10" style={{ left: '50%', transform: 'translateX(-50%)' }}>
-                    <Link
-                      to="/login"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={() => setIsLoginDropdownOpen(false)}
-                    >
-                      Login as Buyer
-                    </Link>
-                    <Link
-                      to="/seller/login"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                      onClick={() => setIsLoginDropdownOpen(false)}
-                    >
-                      Login as Seller
-                    </Link>
-                  </div>
-                )}
-              </div>
+      {
+        isSeller && <>
+          <MenuItem onClick={handleMenuClose}>       <Link
+            to="/seller/profile"
+            className=""
+          >
+            Profile
+          </Link>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>       <Link
+            to="/seller/profile"
+            className=""
+          >
+            <Link to={"/seller/dashboard"} className="">Dashboard</Link>
+          </Link>
+          </MenuItem>
 
 
-            </> :
-
-              <div></div>
-          }
-        </div>
-        <div className='flex items-center gap-4'>
-
-          {
-            isSeller && seller && seller.avatar && <div
-              className="relative rounded-full w-12 h-12 cursor-pointer"
-              onMouseEnter={handleProfileDropdownOpen}
-              onMouseLeave={handleProfileDropdownClose}
+          <MenuItem onClick={handleMenuClose}>
+            <div
+              onClick={sellerLogoutHandler}
+              className=""
             >
-              <img
-                src={seller.avatar.url}
-                alt={seller.name}
-                className="rounded-full w-12 h-12"
-              />
-              {isProfileDropdownOpen && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-full bg-white border border-gray-200 shadow-sm py-2 z-10 w-[250%]">
-                  <Link
-                    to="/seller/profile"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                  <Link to={"/seller/dashboard"} className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Dashboard</Link>
-                  <div
-                    onClick={sellerLogoutHandler}
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Logout
-                  </div>
-                </div>
-              )}
+              Logout
             </div>
-          }
-          {
-            isAuthenticated && user && user.avatar && <div
-              className="relative rounded-full w-12 h-12 cursor-pointer"
-              onMouseEnter={handleProfileDropdownOpen}
-              onMouseLeave={handleProfileDropdownClose}
-            >
-              <img
-                src={user.avatar.url}
-                alt={user.name}
-                className="rounded-full w-12 h-12"
-              />
-              {isProfileDropdownOpen && (
-                <div  className="absolute left-0 transform -translate-x-1/2 top-full bg-black border border-gray-200 shadow-sm py-2 z-100 w-[250%]">
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
+          </MenuItem>
+        </>
+      }
+      {isAdmin && <MenuItem onClick={handleMenuClose}>
+        <Link className='' to={"/admin/dashboard"}>Dashboard</Link>
 
-                  <div
-                    onClick={logoutHandler}
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Logout
-                  </div>
-                </div>
-              )}
-            </div>
-          }
+      </MenuItem>}
 
-
-          {
-            isAdmin && <Link className='px-2 py-1 bg-gray-100 shadow' to={"/admin/dashboard"}>Dashboard</Link>
-          }
-
-
-
-        </div></div>
-
-      <div className="md:hidden">
-        <button
-          className="text-gray-800 focus:outline-none"
-          onClick={toggleMobileMenu}
-        >
-          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-          </svg>
-        </button>
-      </div>
-
-
-
-    </nav>
+    </Menu>
   );
-};
 
-export default Header;
+
+
+  const renderMenuItems = (
+    <Menu
+      anchorEl={anchorElMenu}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      id={'primary-menu-items'}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      open={isMenuItemsOpen}
+      onClose={handleMenuItemsClose}
+      style={{marginTop:'2.6rem'}}
+    >
+      <MenuItem onClick={handleMenuItemsClose}>
+        <Link to={"/"} >Home</Link>
+      </MenuItem>
+      <MenuItem onClick={handleMenuItemsClose}>
+        <Link to={"/products"}>
+          Products
+        </Link>
+      </MenuItem>
+    </Menu>
+  );
+
+
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMobileMenuOpen}
+      style={{marginTop:"2.6rem"}}
+      onClose={handleMobileMenuClose}
+    >
+      {
+        isAuthenticated && <>
+          <MenuItem onClick={handleMenuClose}>
+
+
+            <IconButton size="large" color="inherit">
+              <AccountCircle />
+            </IconButton>
+
+            <Link
+              to="/profile"
+              className=""
+            >
+              Profile
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+
+            <IconButton size="large" color="inherit">
+              <LogoutIcon />
+            </IconButton>
+            <div
+              onClick={logoutHandler}
+              className=""
+            >
+              Logout
+            </div>
+          </MenuItem>
+        </>
+      }
+
+
+
+      {
+        isSeller && <>
+          <MenuItem onClick={handleMenuClose}>       <Link
+            to="/seller/profile"
+            className=""
+          >
+            Profile
+          </Link>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>       <Link
+            to="/seller/profile"
+            className=""
+          >
+            <Link to={"/seller/dashboard"} className="">Dashboard</Link>
+          </Link>
+          </MenuItem>
+
+          <MenuItem onClick={handleMenuClose}>
+            <div
+              onClick={sellerLogoutHandler}
+              className=""
+            >
+              Logout
+            </div>
+          </MenuItem>
+        </>
+      }
+      {isAdmin && <MenuItem onClick={handleMenuClose}>
+        <Link className='' to={"/admin/dashboard"}>Dashboard</Link>
+
+      </MenuItem>}
+
+
+      <MenuItem>
+        <Link to="/cart" className='flex items-center '>
+          <IconButton size="large" aria-label="show product in cart" color="inherit">
+            <Badge badgeContent={cartItems?.length || 0} color="error">
+
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+          <p>Cart</p>
+        </Link>
+      </MenuItem>
+      <MenuItem>
+        <Link to="/wishlist" className='flex items-center '>
+          <IconButton
+            size="large"
+            aria-label="show 17 new notifications"
+            color="inherit"
+          >
+            <Badge badgeContent={wishlist?.length || 0} color="error">
+              <FavoriteBorderIcon />
+            </Badge>
+          </IconButton>
+          <p>Wishlist</p>
+        </Link>
+      </MenuItem>
+
+
+      <MenuItem>
+        <Link to="/compare" className='flex items-center '>
+          <IconButton size="large" aria-label="show product in cart" color="inherit">
+            <Badge badgeContent={compareProducts?.length || 0} color="error">
+
+              <DiGitCompare />
+            </Badge>
+          </IconButton>
+          <p>Compare</p>
+        </Link>
+      </MenuItem>
+
+      {
+        (!isAuthenticated && !isAdmin && !isSeller) && <>  <MenuItem>
+          <IconButton
+            size="large"
+            aria-label="show 17 new notifications"
+            color="inherit"
+          >
+
+            <LoginIcon />
+          </IconButton>
+          <Link to="/login">Login(Buyer)</Link>
+
+
+
+        </MenuItem>
+
+          <MenuItem>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+
+              <LoginIcon />
+            </IconButton>
+            <Link to="/seller/login">Login(Seller)</Link>
+          </MenuItem>
+        </>
+
+      }
+
+
+
+    </Menu>
+  );
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" style={{ background: "#00003c" }}>
+        <Toolbar>
+          <IconButton
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+            onClick={handleMenuItemsToggle}
+            size="large"
+            edge="end"
+            aria-controls={'primary-menu-items'}
+            aria-haspopup={'true'}
+            color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            <Link to={"/"}>  ECOM</Link>
+          </Typography>
+          <Search style={{ position: "relative" }}>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              inputProps={{ 'aria-label': 'search' }}
+            />
+
+            { searchTerm && searchResults && searchResults?.length > 0 && (
+              <div className="absolute top-full px-4 py-2 bg-[#00003c] w-full text-white z-50">
+                {searchResults.map((product) => (
+                  <Link
+                    onClick={clearSetResult}
+                    key={product._id}
+                    to={`/products?keyword=${product.name.split(" ")[0]}`}
+                    className="flex py-1 gap-2 items-center block text-white hover:text-gray-400 justify-between"
+
+                  >
+                    <span>{product.name.split(" ")[0]}</span>  <SearchIcon />
+                  </Link>
+                ))}
+              </div>
+            )}
+
+          </Search>
+
+
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+              <Link to='/cart'> <Badge badgeContent={cartItems?.length || 0} color="error">
+
+                <ShoppingCartIcon />
+              </Badge></Link>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Link to="/wishlist">
+                <Badge badgeContent={wishlist?.length || 0} color="error">
+                  <FavoriteBorderIcon />
+                </Badge>
+              </Link>
+            </IconButton>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <Link to="/compare">   <Badge badgeContent={compareProducts?.length || 0} color="error">
+                <DiGitCompare />
+              </Badge></Link>
+            </IconButton>
+            {
+            <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                {isAuthenticated && <>
+
+                  <Avatar
+                    src={user?.avatar?.url}
+                    alt={user?.name}
+                    className="rounded-full w-12 h-12"
+                  />
+                </>}
+
+
+                {isSeller && <>
+
+                  <Avatar
+                    src={seller?.avatar?.url}
+                    alt={seller?.name}
+                    className="rounded-full w-12 h-12"
+                  />
+                </>}
+
+                {
+                  isAdmin && <MoreIcon/>
+                }
+              </IconButton>
+            }
+          </Box>
+          <Box>
+
+            {
+              (!isAuthenticated && !isAdmin && !isSeller) && <div className='hidden md:block'>
+                <IconButton
+                  ref={loginButtonRef}
+                  onClick={handleLoginMenuOpen}
+                  color="inherit"
+                  size='small'
+                >
+                  Login
+                </IconButton>
+                <Menu
+                  open={isLoginMenuOpen}
+                  onClose={handleLoginMenuClose}
+                  anchorEl={loginButtonRef.current}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                >
+                  <MenuItem><Link onClick={handleLoginMenuClose} to="/seller/login">Login as Seller</Link></MenuItem>
+                  <MenuItem><Link onClick={handleLoginMenuClose} to="/login">Login as Buyer</Link></MenuItem>
+                </Menu>
+              </div>
+
+            }
+
+          </Box>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+
+      </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
+      {renderMenuItems}
+    </Box>
+  );
+}
