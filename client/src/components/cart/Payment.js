@@ -37,7 +37,7 @@ function Payment() {
       try {
         const response = await axios.post(
           // `https://ecom-w0cc.onrender.com/api/v1/create-order`,
-          "http://localhost:9889/api/v1/create-order",
+          "/api/v1/create-order",
           { amount: orderInfo.totalPrice },
           {
             headers: {
@@ -67,7 +67,7 @@ function Payment() {
             // Verify the payment signature
             await axios
               .post(
-                `http://localhost:9889/api/v1/verify`,
+                `/api/v1/verify`,
                 // `https://ecom-w0cc.onrender.com/api/v1/verify`,
                 {
                   razorpay_payment_id,
@@ -127,7 +127,7 @@ function Payment() {
 
     async function getKey() {
       const { data } = await axios.get(
-        `http://localhost:9889/api/v1/getKey`,
+        `/api/v1/getKey`,
         // `https://ecom-w0cc.onrender.com/api/v1/getKey`,
         { withCredentials: true }
       );
